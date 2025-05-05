@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smooth Transitions & Animations</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .animated-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.2s ease-in-out;
+        }
+
+        .animated-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .animated-image-container {
+            width: 200px;
+            height: 200px;
+            overflow: hidden;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .animated-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Custom ease-out with overshoot */
+        }
+
+        .animated-image-container:hover .animated-image {
+            transform: scale(1.1);
+        }
+
+        @keyframes color-pulse {
+            0% { background-color: #28a745; }
+            50% { background-color: #1e7e34; }
+            100% { background-color: #28a745; }
+        }
+
+        .pulsating-element {
+            background-color: #28a745;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 16px;
+            animation: color-pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <h1>Smooth Transitions & Animations</h1>
+
+    <button id="myButton" class="animated-button">Hover Me</button>
+
+    <div id="imageContainer" class="animated-image-container">
+        <img src="image.png" alt="Animated Image" class="animated-image">
+    </div>
+
+    <div id="pulseElement" class="pulsating-element">I'm Pulsating!</div>
+
+    <script>
+        function storePreference(key, value) {
+            try {
+                localStorage.setItem(key, JSON.stringify(value));
+                console.log(`Stored preference: ${key} - ${value}`);
+            } catch (error) {
+                console.error("Error storing preference:", error);
+            }
+        }
+
+        function getPreference(key) {
+            try {
+                const storedValue = localStorage.getItem(key);
+                return storedValue ? JSON.parse(storedValue) : null;
+            } catch (error) {
+                console.error("Error retrieving preference:", error);
+                return null;
+            }
+        }
+
+        function triggerImageAnimation() {
+            const imageContainer = document.getElementById('imageContainer');
+            const currentScale = getComputedStyle(imageContainer.querySelector('.animated-image')).transform;
+
+            // Toggle a class to trigger a different animation state if needed
+            imageContainer.classList.toggle('animate');
+            console.log("Image animation triggered!");
+            storePreference('lastImageAnimation', new Date().toISOString());
+        }
+
+        // Add event listener to the image to trigger animation on click
+        const imageContainer = document.getElementById('imageContainer');
+        imageContainer.addEventListener('click', triggerImageAnimation);
+
+        // Load any stored animation preference (for demonstration)
+        const lastAnimationTime = getPreference('lastImageAnimation');
+        if (lastAnimationTime) {
+            console.log(`Last image animation: ${lastAnimationTime}`);
+        }
+
+        // Example of dynamically changing button text and adding a class after a delay
+        const myButton = document.getElementById('myButton');
+        myButton.addEventListener('click', () => {
+            myButton.textContent = "Clicked!";
+            setTimeout(() => {
+                myButton.classList.add('clicked'); // You could define styles for .clicked
+                storePreference('lastButtonClick', new Date().toISOString());
+            }, 1000);
+        });
+
+        const lastButtonClickTime = getPreference('lastButtonClick');
+        if (lastButtonClickTime) {
+            console.log(`Last button click: ${lastButtonClickTime}`);
+        }
+    </script>
+</body>
+</html>
